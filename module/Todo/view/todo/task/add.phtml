@@ -1,0 +1,8 @@
+<legend>Add new task</legend>
+<?php
+$form = $this->form;
+$form->setAttribute('action', $this->url('task', array('action' => $this->targetAction, 'id' => $this->targetId)));
+$form->prepare();
+echo $this->form()->openTag($form);
+echo $this->formTwb($form, 'vertical');
+echo $this->form()->closeTag();

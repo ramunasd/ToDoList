@@ -1,0 +1,4 @@
+.settings
+composer.lock
+config/autoload/local.php
+vendor/*

@@ -1,0 +1,15 @@
+{
+    "name":"ramunasd/ToDo List",
+    "description":"Demo application for ZF2",
+    "license":"BSD-3-Clause",
+    "keywords":[
+        "framework",
+        "zf2"
+    ],
+    "homepage":"http://github.com/ramunasd",
+    "require":{
+        "php":">=5.3.3",
+        "zendframework/zendframework":">2.1.3",
+        "dlu/dlutwbootstrap":"dev-master"
+    }
+}

@@ -1,0 +1,80 @@
+<?php
+$title = 'ToDo List';
+$this->headTitle($title);
+?>
+<h1><?php echo $this->escapeHtml($title); ?>&nbsp;&nbsp;
+<?php if($this->acl('mvc:task', 'add')):?>
+<button type="button" class="btn btn-primary btn-mini" data-target="#myModal" href="<?php echo $this->url('task', array('action' => 'add')); ?>">Add new task</button>
+<?php
+endif;
+?></h1><?php
+$container = $this->navigation()->findOneByLabel('Tasks');
+echo $this->navigation('navigation')->menu()->renderSubMenu($container, 'nav nav-pills');
+?>
+<table class="table table-striped table-hover table-condensed">
+<tr>
+    <th>#</th>
+    <th>Title</th>
+    <th>Description</th>
+    <th>Priority</th>
+    <th>Deadline</th>
+    <th width="120">&nbsp;</th>
+</tr>
+<?php
+if(count($tasks) == 0){
+    ?><tr><td colspan="5" align="center">No tasks found</td></tr><?php
+}
+$labels = array(
+    'low' => '', 'medium' => 'label-info', 'high' => 'label-warning', 'critical' => 'label-important',
+);
+foreach ($tasks as $task):
+?>
+<tr<?php echo ($task->isOverdue()) ? ' class="error"' : ''; ?> id="row_<?php echo $task->uid; ?>">
+    <td><input type="checkbox" class="checkbox checkbox-complete" name="task[]" value="<?php echo $task->uid; ?>"/></td>
+    <td><?php echo $this->escapeHtml($task->title);?></td>
+    <td><?php echo $this->escapeHtml($task->description);?></td>    
+    <td><span class="label <?php echo $labels[$task->priority]; ?>"><?php echo ucfirst($task->priority);?></span></td>
+    <td><?php echo $this->escapeHtml($task->deadline);?></td>
+    <td>
+        <?php if($this->acl('mvc:task', 'edit')):?>
+        <button type="button" class="btn btn-mini btn-edit" data-target="#myModal" href="<?php echo $this->url('task', array('action' => 'edit', 'id' => $task->uid)); ?>">Edit</button>
+        <?php
+        endif;
+        if($this->acl('mvc:task', 'complete')): ?>
+        <button class="btn btn-mini btn-success btn-complete" type="button" data-loading-text="Completing..." href="<?php echo $this->url('task', array('action' => 'complete', 'id' => $task->uid)); ?>">Completed</button>
+        <?php endif; ?>
+    </td>
+</tr>
+<?php endforeach; ?>
+</table>
+<!-- Modal -->
+<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-body"></div>
+</div>
+<?php
+$this->inlineScript()->captureStart();
+?>
+$(document).ready(function(){
+    $(".btn").button();
+    $(".btn-complete").click(function(e){
+        e.preventDefault();
+        $(this).button("loading");
+        $.getJSON($(this).attr("href"), function(data){
+            if(data.success){
+                $("#row_" + data.uid).remove();
+            }
+        });
+    });
+    $(".checkbox-complete").click(function(e){
+        $(this).attr("disabled", "disabled");
+        $(this).parents("tr:first").find(".btn-complete").click();
+    });
+    $("button[data-target=#myModal]").click(function(e){
+        e.preventDefault();
+        $("#myModal .modal-body").load($(this).attr("href"), function(){
+            $("#myModal").modal("show");
+        });
+    });
+});
+<?php
+$this->inlineScript()->captureEnd();

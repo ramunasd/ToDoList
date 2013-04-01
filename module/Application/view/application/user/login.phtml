@@ -1,0 +1,19 @@
+<legend>Sign In</legend>
+<?php
+$form = $this->form;
+$form->setAttribute('action', $this->url('application/default', array('controller' => 'user', 'action' => 'authenticate')));
+$form->setAttribute('class', 'form-horizontal');
+$form->prepare();
+ 
+echo $this->form()->openTag($form);
+echo $this->formTwb($form, 'vertical');
+echo $this->form()->closeTag();
+ 
+if ($this->messages){
+    echo '<ul class="form_messages">';
+    foreach($this->messages as $message)
+    {
+        echo '<li>', $message, '</li>';
+    }
+    echo '</ul>';
+}
